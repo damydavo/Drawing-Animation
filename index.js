@@ -15,11 +15,11 @@ class Timer {
 
   start = () => {
     if(this.onStart) {
-        this.onStart()
+        this.onStart(this.timeRemaining)
     }
 
       this.tick()
-      this.intervalId = setInterval(this.tick, 50)
+      this.intervalId = setInterval(this.tick, 20)
   } 
 
   tick = () => {
@@ -29,9 +29,9 @@ class Timer {
            this.onComplete();
       }
     } else {
-     this.timeRemaining = this.timeRemaining - 0.05 
+     this.timeRemaining = this.timeRemaining - 0.02 
      if(this.onTick) {
-         this.onTick()
+         this.onTick(this.timeRemaining)
      }
 
     }
@@ -43,7 +43,7 @@ class Timer {
     }
     
     set timeRemaining(time) {
-       return this.durationInput.value = time
+       return this.durationInput.value = time.toFixed(2)
     }
 
   pause = () => {
@@ -60,15 +60,14 @@ const perimeter = circle.getAttribute('r') * 2 * Math.PI
 circle.setAttribute('stroke-dasharray', perimeter)
 
 
-let currentOffset = 0;
+let duration;
 const timer = new Timer(durationInput, startButton, pauseButton, {
-  onStart() {
-    console.log('Timer has just started')
+  onStart(totalDuration) {
+    duration = totalDuration
   },
 
-  onTick() {
-    circle.setAttribute('stroke-dashoffset', currentOffset)
-    currentOffset = currentOffset - 1
+  onTick(timeRemaining) {
+    circle.setAttribute('stroke-dashoffset', perimeter * timeRemaining / duration - perimeter)
   },
 
   onComplete() {
